@@ -1,0 +1,25 @@
+version: '3'
+services:
+ mongodb:
+   image: mongo:3.6   
+   expose:                 
+     - "27017"
+   volumes:
+     - db_data:/data/db
+   networks:
+    - usernet
+
+ web:
+   image: registry.cloudyuga.guru/library/userinfo-go:v1
+   ports:
+    - "80:80"
+   environment:
+    MONGO_URI: mongodb://mongodb:27017
+   networks:
+    - usernet
+
+networks:
+  usernet:
+
+volumes:
+   db_data:

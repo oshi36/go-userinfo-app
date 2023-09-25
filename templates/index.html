@@ -1,0 +1,109 @@
+{{define "form"}}
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+input[type=text], select{
+  width: 25%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  
+}
+
+input[type=email], select{
+  width: 25%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+button[type=Submit] {
+  background-color: #04AA6D;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: left;
+  margin-top: 15px;
+}
+
+button[type=Submit]:hover {
+  background-color: #45a049;
+}
+
+.content {
+  max-width: 500px;
+  margin: auto;
+}
+
+
+.col-25 {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+  margin-left: 6px;
+  
+}
+
+.col-75 {
+  float: left;
+  width: 150%;
+  margin-top: 6px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+
+</style>
+</head>
+<body bgcolor="#CBC3E3" >
+<br>
+
+<h2 class="content">CloudYuga User Data Form</h2><br>
+
+<div class="content">
+  <form action="/new" , method="post">
+    <div class="row">
+      <div class="col-25">
+        <label for="name">Name</label>
+      </div>
+      <div class="col-75">
+        <input type="text" id="name" name="name" placeholder="Your name..">
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-25">
+        <label for="email">Email</label>
+      </div>
+      <div class="col-75">
+        <input type="email" id="email" name="email" placeholder="Your Email..">
+        </div>
+    </div>
+    <div class="row">
+      <button type="Submit" onclick="alert('Information Submitted!')" name="submit" >Submit</button>   
+    </div>
+  </form>
+</div>
+
+</body>
+</html>
+{{end}}
