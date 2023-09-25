@@ -14,9 +14,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/joho/godotenv"
+	"os"
+
 )
 
-const connectionString = "mongodb://localhost:27017"
 
 // Database Name
 const dbName = "userdata"
@@ -29,6 +31,13 @@ var collection *mongo.Collection
 
 // create connection with mongo db
 func init() {
+ 
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	  }
+	
+	connectionString := os.Getenv("MONGO_URI")
 
 	// Set client options
 	clientOptions := options.Client().ApplyURI(connectionString)

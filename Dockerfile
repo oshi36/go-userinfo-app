@@ -6,12 +6,12 @@ FROM golang:1.20-alpine AS build
 WORKDIR /app
 
 # Download Go modules
-COPY go.mod  ./
+COPY go.mod go.sum  ./
 RUN go mod download
 
-COPY . ./
+COPY . .
 
 # Build
 RUN CGO_ENABLED=0 GOOS=linux go build -o  /godocker
-EXPOSE 8080
+EXPOSE 80
 CMD ["/godocker"]
