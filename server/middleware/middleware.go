@@ -16,6 +16,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"github.com/joho/godotenv"
 	"os"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/sdk/resource"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+    "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 
 )
 
@@ -42,6 +49,9 @@ func init() {
 	// Set client options
 	clientOptions := options.Client().ApplyURI(connectionString)
 
+          // Add the instrumentation to the client
+	clientOptions.Monitor = otelmongo.NewMonitor()
+
 	// connect to MongoDB
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 
@@ -55,12 +65,15 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+ 
+  
 	fmt.Println("Connected to MongoDB!")
 
 	collection = client.Database(dbName).Collection(collName)
 
 	fmt.Println("Collection instance created!")
+	initTracer()
+
 
 }
 
@@ -171,4 +184,32 @@ func deleteUser(detail string) {
 
 	fmt.Println("Deleted Document", d.DeletedCount)
 
+}
+
+func initTracer() {
+	ctx := context.Background()
+
+	client := otlptracehttp.NewClient()
+	exporter, err := otlptrace.New(ctx, client)
+	if err != nil {
+		log.Fatalf("failed to initialize exporter: %e", err)
+	}
+
+	res, err := resource.New(ctx)
+	if err != nil {
+		log.Fatalf("failed to initialize resource: %e", err)
+	}
+
+	// Create the trace provider
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(res),
+	)
+
+	// Set the global trace provider
+	otel.SetTracerProvider(tp)
+
+	// Set the propagator
+	propagator := propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{})
+	otel.SetTextMapPropagator(propagator)
 }
